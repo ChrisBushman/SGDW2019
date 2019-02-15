@@ -137,17 +137,15 @@ function update() {
     }
     
     // Check for Analog Stick input
-    if (gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) //&& 
-       // (gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) > 0.1 || 
-       //  gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) < -0.1)) {
-   ){
+    if (gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) && 
+        (gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) > 0.1 || 
+         gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) < -0.1)) {
       player.position.x = player.position.x + (gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X)) * 5;
     }
     
-    if (gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) //&& 
-       // (gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) > 0.1 || 
-       //  gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) < -0.1)) {
-        ){
+    if (gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) && 
+        (gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) > 0.1 || 
+         gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) < -0.1)) {
       player.position.y = player.position.y + (gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y)) * 5;
     }
   }
