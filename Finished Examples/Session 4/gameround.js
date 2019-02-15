@@ -3,21 +3,21 @@ var gameRound = function(game) {
 }
 
 // configuration variables and starting values
-var head, tail, cursors, snake, coin, gameText, playerDirection, movementDirection, speedLimit;
+var head, tail, snake, coin, gameText, playerDirection, movementDirection, speedLimit;
 var directions = Object.freeze({up: 0, down: 1, right: 2, left: 3});
 var x = 0, y = 0;
 var gameSpeed = 0.5;
 var score = 0;
 var deltaTime = 0;
+var gameOver = false;
 
 gameRound.prototype = {
   preload: function() {    
-    game.load.image('background', 'Assets/Images/background.jpg');
-    game.load.image('snake', 'Assets/Images/square.png');
-    game.load.image('coin', 'Assets/Images/coin_segment.png');
-    cursors = game.input.keyboard.createCursorKeys();
+    game.load.image('background', 'assets/Images/background.png');
+    game.load.image('snake', 'assets/Images/square.png');
+    game.load.image('coin', 'assets/Images/coin_segment.png');
   },
-  
+ 
   create: function() {
     game.add.sprite(0, 0, 'background');
     gameText = game.add.text(canvasWidth, 0, "0", {
@@ -39,7 +39,7 @@ gameRound.prototype = {
     if (deltaTime >= gameSpeed) {
       movePlayer();
       if (playerCollidesWithSelf()) {
-        gameOver();
+        gameOver = true;
       }
       else if (coinCollidesWithSnake()) {
         score++;
@@ -58,9 +58,30 @@ gameRound.prototype = {
         removeTail();
       }
       
+      if (gameOver === true) {
+        winner = "Your score was " + score + "!";
+        gameOver = false;
+        x = 0; 
+        y = 0;
+        gameSpeed = 0.5;
+        score = 0;
+        deltaTime = 0;
+        gameOver = false;
+        playerDirection = undefined;
+        game.state.start("GameOver");
+      }
       deltaTime = 0;
     }
   }
+}
+function initSnake() {
+  head = {};
+  newHead(0, 0);
+  tail = head;
+  newHead(playerXSize, 0);
+  newHead(playerXSize * 2, 0);
+  x = playerXSize * 2;
+  y = 0;
 }
 
 function deleteSnake() {
@@ -134,19 +155,23 @@ function playerCollidesWithSelf() {
 // generic function to check for input
 function updateDirection(gamepad) {
   // Check for D-Pad input
-  if (gamepad.isDown(Phaser.Gamepad.XBOX360_DPAD_LEFT) ) {
+  if (gamepad.isDown(Phaser.Gamepad.XBOX360_DPAD_LEFT) &&
+     movementDirection != directions.right) {
     playerDirection = directions.left;
   }
 
-  if (gamepad.isDown(Phaser.Gamepad.XBOX360_DPAD_RIGHT)) {
+  if (gamepad.isDown(Phaser.Gamepad.XBOX360_DPAD_RIGHT) &&
+     movementDirection != directions.left) {
     playerDirection = directions.right;
   }
 
-  if (gamepad.isDown(Phaser.Gamepad.XBOX360_DPAD_UP)) {
+  if (gamepad.isDown(Phaser.Gamepad.XBOX360_DPAD_UP) &&
+     movementDirection != directions.down) {
     playerDirection = directions.up;
   }
 
-  if (gamepad.isDown(Phaser.Gamepad.XBOX360_DPAD_DOWN)) {
+  if (gamepad.isDown(Phaser.Gamepad.XBOX360_DPAD_DOWN) &&
+     movementDirection != directions.up) {
     playerDirection = directions.down;
   }
 }
@@ -166,15 +191,10 @@ function movePlayer() {
     movementDirection = directions.down;
   }
   if (x <= 0 - playerXSize|| x >= canvasWidth || y <= 0 - playerYSize || y >= canvasHeight ) {
-    gameOver();
+    gameOver = true;
   }
 
   if (playerDirection !== undefined) {
     newHead(x, y);
   }
-}
-
-function gameOver() {
-  winner = "Player " + player.id + "'s score was " + score + "!";
-  game.state.start("GameOver");
 }
