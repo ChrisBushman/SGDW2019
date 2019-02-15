@@ -13,7 +13,7 @@ var deltaTime = 0;
 gameRound.prototype = {
   preload: function() {    
     game.load.image('background', 'Assets/Images/background.jpg');
-    game.load.image('snake', 'Assets/Images/snake_segment.png');
+    game.load.image('snake', 'Assets/Images/square.png');
     game.load.image('coin', 'Assets/Images/coin_segment.png');
     cursors = game.input.keyboard.createCursorKeys();
   },
