@@ -2,76 +2,172 @@ var gameRound = function(game) {
   
 }
 
-var initX = 100;
-var initY = 100;
-var initTint = 0.3;
-var finishX = 600;
-var finishY = 800;
-var finishLine;
+// configuration variables and starting values
+var head, tail, snake, coin, gameText, playerDirection, movementDirection;
+var directions = Object.freeze({up: 0, down: 1, right: 2, left: 3});
+var x = 0, y = 0;
+var gameSpeed = 0.5;
+var score = 0;
+var deltaTime = 0;
+var gameOver = false;
 
 gameRound.prototype = {
   preload: function() {
-    game.load.image('player', 'assets/Images/square.png');
-    game.load.image('finishLine', 'assets/Images/projectile.png');
+    game.load.image('snake', 'assets/Images/square.png');
+    game.load.image('background', 'assets/Images/background.png');
+    game.load.image('coin', 'assets/Images/coin_segment.png');
   },
   
   create: function() {
-    finishLine = game.add.sprite(finishX + 30, 0, 'finishLine');
-    finishLine.scale.y = finishY;
-    
-    players.forEach( function(player) {
-      player.obj = game.add.sprite(initX, initY, 'player');
-      player.obj.tint = initTint * 0xffffff;
-      
-      initY = initY + 60;
-      
-      initTint = initTint + 0.2;
+    game.add.sprite(0, 0, 'background');
+    gameText = game.add.text(canvasWidth, 0, "0", {
+        font: "28px Arial",
+        fill: "#fff"
     });
-    
-    initY = 100;
-    initTint = 0.3;
+    gameText.anchor.setTo(1, 0);
+    initSnake();
+    placeRandomCoin();
   },
   
   update: function() {
+    gameText.text = score;
     players.forEach( function(player) {
-      movePlayer(player.pad, player.obj);
+      updateDirection(player.pad);
+    });
+    
+    deltaTime = deltaTime + game.time.physicsElapsed;
+    
+    if (deltaTime >= gameSpeed) {
+      movePlayer();
       
-      if (player.obj.x > finishX) {
-        winner = "The winner was Player " + player.id + "!";
+      if (coinCollidesWithSnake()) {
+        score++;
+        coin.destroy();
+        placeRandomCoin();
+        
+        if (gameSpeed > 0.034) {
+          gameSpeed = (gameSpeed / 1.5);
+        }
+      }
+      
+      if (x <= 0 - playerXSize|| 
+          x >= canvasWidth || 
+          y <= 0 - playerYSize || 
+          y >= canvasHeight ) {
+        gameOver = true;
+      }
+      if (playerDirection !== undefined) {
+        removeTail();
+      }
+      deltaTime = 0;
+      
+      if (gameOver === true) {
+        winner = "Your score was " + score + "!";
+        gameOver = false;
+        x = 0; 
+        y = 0;
+        gameSpeed = 0.5;
+        score = 0;
+        deltaTime = 0;
+        playerDirection = undefined;
         game.state.start("GameOver");
       }
-    });
+    }
   }
 }
 
-function movePlayer(gamepad, player) {
+function newHead(x, y) {
+  var newHead = {};
+  newHead.image = game.add.image(x, y, 'snake');
+  newHead.next = null;
+  head.next = newHead;
+  head = newHead;
+}
+
+function initSnake() {
+  head = {};
+  newHead(0, 0);
+  tail = head;
+  newHead(playerXSize, 0);
+  newHead(playerXSize * 2, 0);
+  x = playerXSize * 2;
+  y = 0;
+}
+
+function coinCollidesWithSnake() {
+  // traverse the linked list, starting at the tail
+  var needle = tail;
+  var collides = false;
+  var numTimes = 0;
+  while (needle != null) {
+    numTimes++;
+    if (coin.position.x == needle.image.position.x && 
+        coin.position.y == needle.image.position.y) {
+      collides = true;
+    }
+    needle = needle.next;
+  }
+  return collides;
+}
+
+function placeRandomCoin() {
+  if (coin !== undefined) {
+    coin.destroy();
+  }
+  coin = game.add.image(0, 0, 'coin');
+  do {
+      coin.position.x = Math.floor(Math.random() * 13) * 40;
+      coin.position.y = Math.floor(Math.random() * 10) * 40;
+  } while (coinCollidesWithSnake());
+}
+
+function updateDirection(gamepad) {
   // Check D-Pad input
-  if (gamepad.isDown(Phaser.Gamepad.XBOX360_DPAD_LEFT)) {
-    player.position.x = player.position.x - 5;
+  if (gamepad.isDown(Phaser.Gamepad.XBOX360_DPAD_LEFT) &&
+     movementDirection != directions.right) {
+    playerDirection = directions.left;
   }
 
-  if (gamepad.isDown(Phaser.Gamepad.XBOX360_DPAD_RIGHT)) {
-    player.position.x = player.position.x + 5;
+  if (gamepad.isDown(Phaser.Gamepad.XBOX360_DPAD_RIGHT) &&
+     movementDirection != directions.left) {
+    playerDirection = directions.right;
   }
 
-  if (gamepad.isDown(Phaser.Gamepad.XBOX360_DPAD_UP)) {
-    player.position.y = player.position.y - 5;
+  if (gamepad.isDown(Phaser.Gamepad.XBOX360_DPAD_UP) &&
+     movementDirection != directions.down) {
+    playerDirection = directions.up;
   }
 
-  if (gamepad.isDown(Phaser.Gamepad.XBOX360_DPAD_DOWN)) {
-    player.position.y = player.position.y + 5;
+  if (gamepad.isDown(Phaser.Gamepad.XBOX360_DPAD_DOWN) &&
+     movementDirection != directions.up) {
+    playerDirection = directions.down;
   }
+}
 
-  // Check for Analog Stick input
-  if (gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) && 
-      (gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) > 0.1 || 
-       gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) < -0.1)) {
-    player.position.x = player.position.x + (gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X)) * 5;
+function movePlayer() {
+  if (playerDirection == directions.right) {
+    x += playerXSize;
+    movementDirection = directions.right;
+  } 
+  else if (playerDirection == directions.left) {
+    x -= playerXSize;
+    movementDirection = directions.left;
+  } 
+  else if (playerDirection == directions.up) {
+    y -= playerYSize;
+    movementDirection = directions.up;
+  } 
+  else if (playerDirection == directions.down) {
+    y += playerYSize;
+    movementDirection = directions.down;
   }
+  
+  if (playerDirection !== undefined) {
+    newHead(x, y);
+  }
+}
 
-  if (gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) && 
-      (gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) > 0.1 || 
-       gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) < -0.1)) {
-    player.position.y = player.position.y + (gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y)) * 5;
-  }
+function removeTail() {
+  tail.image.destroy();
+  tail = tail.next;
 }
