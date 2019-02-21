@@ -3,7 +3,7 @@ var gameRound = function(game) {
 }
 
 // configuration variables and starting values
-var head, tail, snake, coin, gameText, playerDirection, movementDirection;
+var head, tail, snake, coin, gameText, playerDirection, movementDirection, cursors;
 var directions = Object.freeze({up: 0, down: 1, right: 2, left: 3});
 var x = 0, y = 0;
 var gameSpeed = 0.5;
@@ -16,6 +16,8 @@ gameRound.prototype = {
     game.load.image('snake', 'assets/Images/square.png');
     game.load.image('background', 'assets/Images/background.png');
     game.load.image('coin', 'assets/Images/coin_segment.png');
+    
+    cursors = game.input.keyboard.createCursorKeys();
   },
   
   create: function() {
@@ -122,25 +124,49 @@ function placeRandomCoin() {
 }
 
 function updateDirection(gamepad) {
-  // Check D-Pad input
-  if (gamepad.isDown(Phaser.Gamepad.XBOX360_DPAD_LEFT) &&
-     movementDirection != directions.right) {
-    playerDirection = directions.left;
-  }
+  if (gamepad === null) {
+    if (cursors.left.isDown &&
+       movementDirection != directions.right) {
+      playerDirection = directions.left;
+    }
 
-  if (gamepad.isDown(Phaser.Gamepad.XBOX360_DPAD_RIGHT) &&
-     movementDirection != directions.left) {
-    playerDirection = directions.right;
-  }
+    if (cursors.right.isDown &&
+       movementDirection != directions.left) {
+      playerDirection = directions.right;
+    }
 
-  if (gamepad.isDown(Phaser.Gamepad.XBOX360_DPAD_UP) &&
-     movementDirection != directions.down) {
-    playerDirection = directions.up;
-  }
+    if (cursors.up.isDown &&
+       movementDirection != directions.down) {
+      playerDirection = directions.up;
+    }
 
-  if (gamepad.isDown(Phaser.Gamepad.XBOX360_DPAD_DOWN) &&
-     movementDirection != directions.up) {
-    playerDirection = directions.down;
+    if (cursors.down.isDown &&
+       movementDirection != directions.up) {
+      playerDirection = directions.down;
+    }
+  }
+  
+  else {
+    // Check D-Pad input
+    if (gamepad.isDown(Phaser.Gamepad.XBOX360_DPAD_LEFT) &&
+       movementDirection != directions.right) {
+      playerDirection = directions.left;
+    }
+
+    if (gamepad.isDown(Phaser.Gamepad.XBOX360_DPAD_RIGHT) &&
+       movementDirection != directions.left) {
+      playerDirection = directions.right;
+    }
+
+    if (gamepad.isDown(Phaser.Gamepad.XBOX360_DPAD_UP) &&
+       movementDirection != directions.down) {
+      playerDirection = directions.up;
+    }
+
+    if (gamepad.isDown(Phaser.Gamepad.XBOX360_DPAD_DOWN) &&
+       movementDirection != directions.up) {
+      playerDirection = directions.down;
+    }
   }
 }
 

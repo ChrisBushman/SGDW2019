@@ -5,6 +5,7 @@ var playerJoin = function(game) {
 
 var instructionsText;
 var gamePads = [];
+var keyboardJoin = false;
 
 playerJoin.prototype = {
 
@@ -69,6 +70,21 @@ playerJoin.prototype = {
                       instructionsStyle);
       }
     });
+    
+    if (keyboardJoin === false && game.input.keyboard.isDown(Phaser.KeyCode.A)) {
+      keyboardJoin = true;
+      
+      players.push({
+          pad: null,
+          obj: undefined,
+          id: players.length + 1
+        });
+      
+      game.add.text(Math.random() * 800, 
+                      Math.random() * 600, 
+                      "Player " + players.length + " has joined.", 
+                      instructionsStyle);
+    }
     
     if (game.input.keyboard.isDown(Phaser.KeyCode.ENTER)) {
       game.state.start("GameRound");
