@@ -16,8 +16,8 @@ var players = [];
 // String for victory result
 var winner = "";
 
-game.state.add("gameRound", gameRound);
-game.state.add("playerJoin",playerJoin);
+game.state.add("GameRound", gameRound);
+game.state.add("PlayerJoin",playerJoin);
 game.state.add("GameOver",gameOver);
 game.state.add("Title", title);
 game.state.start("Title");

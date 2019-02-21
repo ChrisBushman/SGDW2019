@@ -2,10 +2,12 @@ var playerJoin = function(game) {
   
 }
 
+
 var instructionsText;
 var gamePads = [];
 
 playerJoin.prototype = {
+
   preload : function() {
     
     //start the gamepad manager
@@ -49,7 +51,8 @@ playerJoin.prototype = {
     instructionsText.anchor.set(0.5);
   },
   
-  update: function(){
+  update: function() {
+
     gamePads.forEach(function(gamePad) {
       if (gamePad.assigned === false &&
           gamePad.padID.justPressed(Phaser.Gamepad.XBOX360_A)) {
