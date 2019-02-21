@@ -1,6 +1,6 @@
- var gameOver = function(game) {
-   
- };
+var gameOver = function(game) {
+
+};
 
 var gameOverTxt;
 
