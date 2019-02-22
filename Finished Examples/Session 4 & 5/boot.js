@@ -5,17 +5,20 @@ var playerXSize = 40;
 var playerYSize = 40;
 var canvasWidth = playerXSize * columns;
 var canvasHeight = playerYSize * rows;
+
 // Instance of game
 var game = new Phaser.Game(canvasWidth, canvasHeight, Phaser.AUTO, "game");
-// Styling for Instructional text
+
+// Styling for Instructional Text
 var instructionsStyle = { font: "30px Arial", fill: "#ff0044", align: "center" };
-// Handles for Player objects
+// Handles for Player object
 var players = [];
 // String for victory result
 var winner = "";
 
-game.state.add("gameRound", gameRound);
-game.state.add("playerJoin",playerJoin);
-game.state.add("GameOver",gameOver);
+game.state.add("GameRound", gameRound);
+game.state.add("PlayerJoin", playerJoin);
+game.state.add("GameOver", gameOver);
 game.state.add("Title", title);
+console.log(game.state.states);
 game.state.start("Title");
