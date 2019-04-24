@@ -50,6 +50,7 @@ playerJoin.prototype = {
                                    "Press 'A' to Join.\nPress 'Enter' to Begin.", 
                                    instructionsStyle);
     instructionsText.anchor.set(0.5);
+    keyboardJoin = false;
   },
   
   update: function() {
