@@ -74,6 +74,8 @@ gameRound.prototype = {
 
         else if (powerupCollidesWithSnake()) {
           powerup.destroy();
+          console.log("Powerup destroyed:");
+          console.log(powerup);
           removeTail();
           removeTail();
         }
@@ -176,7 +178,7 @@ function powerupCollidesWithCoin() {
 }
 
 function placeRandomCoin() {
-  if (coin !== undefined) {
+  if (coin !== undefined && coin.alive) {
     coin.destroy();
   }
   coin = game.add.image(0, 0, 'coin');
@@ -188,19 +190,10 @@ function placeRandomCoin() {
 }
 
 function placeRandomPowerup() {
-  if (powerup !== undefined) {
-    coin.destroy();
-  }
-  coin = game.add.image(0, 0, 'coin');
-  do {
-      coin.position.x = Math.floor(Math.random() * 13) * 40;
-      coin.position.y = Math.floor(Math.random() * 10) * 40;
-  } while (coinCollidesWithSnake());
-}
-
-function placeRandomPowerup() {
-  if (powerup === undefined) {
-    if (Math.random() > 0.7) {
+  if (powerup === undefined || !powerup.alive) {
+    var randomValue = Math.random();
+    console.log("PowerUp random is: " + randomValue);
+    if (randomValue > 0.7) {
       powerup = game.add.image(0, 0, 'powerup');
 
       do {

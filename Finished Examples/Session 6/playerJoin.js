@@ -5,12 +5,12 @@ var playerJoin = function(game) {
 
 var instructionsText;
 var gamePads = [];
-var keyboardJoin = false;
+var keyboardJoin;
 
 playerJoin.prototype = {
 
   preload : function() {
-    
+    keyboardJoin = false;
     //start the gamepad manager
     game.input.gamepad.start();
     
